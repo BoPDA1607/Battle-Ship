@@ -1,12 +1,13 @@
 #include "Node.h"
 
-class Map
+class Map : protected Node
 {
-    private:
-        Node** m;
+    protected:
+        SDL_Rect** m;
         static int mapSize;
     public:
         Map();
-        Map(const int, const int, SDL_Renderer*);
         ~Map();
+        void drawMap(SDL_Renderer&, SDL_Texture*);
+        void Show();
 };

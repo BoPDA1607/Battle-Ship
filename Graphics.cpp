@@ -1,9 +1,11 @@
 #include "Graphics.h"
 
+Graphics::Graphics()
+{ }
 Graphics::Graphics(string filepath, SDL_Renderer& rend)
 { 
     SDL_Surface* surface = SDL_LoadBMP(filepath.c_str());
-    SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 255, 255, 255));
+    //SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 255, 255, 255));
     this->m_tex = SDL_CreateTextureFromSurface(&rend, surface);
     SDL_FreeSurface(surface);
 }

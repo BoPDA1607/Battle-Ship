@@ -2,7 +2,7 @@
 class Boat : protected Map
 {
     protected:
-        SDL_Rect* p;
+        Node* p;
         int boatSize;
     public: 
         static int boatNums;
@@ -11,7 +11,7 @@ class Boat : protected Map
         Boat();
         ~Boat();
         bool operator==(SDL_Rect&);
-        void DrawBoat(SDL_Renderer&, SDL_Rect&, float&, float&, float&);
-        SDL_Rect* GetBoat(int);
+        void DrawBoat(SDL_Renderer&, Node&);
+        Node* GetBoat(int);
         void flipBoat(SDL_Renderer&, SDL_Texture*, int, float = 0.0f);
 };

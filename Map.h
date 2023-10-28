@@ -3,11 +3,12 @@
 class Map : protected Node
 {
     protected:
-        SDL_Rect** m;
+        Node** m;
         static int mapSize;
     public:
         Map();
+        Map(const int, const int);
         ~Map();
-        void drawMap(SDL_Renderer&, SDL_Texture*);
+        void drawMap(SDL_Renderer&);
         void Show();
 };

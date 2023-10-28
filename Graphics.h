@@ -7,6 +7,7 @@ class Graphics
     protected:
         SDL_Texture* m_tex;
     public:
+        Graphics();
         Graphics(string, SDL_Renderer&);
         ~Graphics();
         void Render(SDL_Renderer&, SDL_Rect*, float = 0.0f, SDL_RendererFlip = SDL_FLIP_NONE);

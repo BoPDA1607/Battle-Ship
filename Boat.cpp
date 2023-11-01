@@ -9,8 +9,16 @@ Boat::Boat()
     for(int i = 0; i < Boat::boatNums; i++)
     {
         this->boatSize = Boat::ListOfBoatSize[i];
-        // *(this->p + i) = new SDL_Rect[this->boatSize];
-       *(this->p+i) = Node(0, i*Node::nodeSize, Node::nodeSize*this->boatSize, Node::nodeSize); 
+       *(this->p+i) = Node(240, i*Node::nodeSize + 80, Node::nodeSize*this->boatSize, Node::nodeSize); 
+    }
+}
+Boat::Boat(int n)
+{
+    this->p = new Node[this->boatNums];
+    for(int i = 1; i < Boat::boatNums+1; i++)
+    {
+        this->boatSize = Boat::ListOfBoatSize[i];
+        *(this->p + i) = Node(1.0, float(i), 0.0);
     }
 }
 Boat::~Boat()

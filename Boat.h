@@ -9,6 +9,7 @@ class Boat : protected Map
         static int ListOfBoatSize[3];
     public:
         Boat();
+        Boat(int);
         ~Boat();
         bool operator==(SDL_Rect&);
         void DrawBoat(SDL_Renderer&, Node&);

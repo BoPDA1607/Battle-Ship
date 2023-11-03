@@ -1,5 +1,5 @@
 #include <iostream>
-#include ".header\Boat.h"
+#include "header\Boat.h"
 const int WIDTH = 1000, HEIGHT = 600;
 
 int main( int argc, char *argv[])

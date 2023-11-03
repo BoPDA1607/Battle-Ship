@@ -1,4 +1,4 @@
-#include "D:\PBL2\.header\Boat.h"
+#include "D:\PBL2\header\Boat.h"
 int Boat::boatNums = 3;
 int Boat::ListOfBoatSize[3] = {2, 3, 3};
 // int Boat::index = 0;

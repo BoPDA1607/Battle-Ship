@@ -1,4 +1,4 @@
-#include "D:\PBL2\.header\Node.h"
+#include "D:\PBL2\header\Node.h"
 int Node::nodeSize = 80;
 Node::Node(float xVal, float yVal, int x, int y, int w, int h, float ang)
     : xVal(xVal), yVal(yVal), angle(ang), isHit(false)

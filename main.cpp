@@ -5,12 +5,13 @@ const int WIDTH = 1000, HEIGHT = 600;
 int main( int argc, char *argv[])
 {
     bool GameIsRunning = true, leftButtonDown = false, StartGame = false;
+    // int turn = 0;
     SDL_Event event;
     SDL_Point mousePos;
     SDL_Point clickOffset;
     Node* selected_rect;
 
-    Node hitNode = Node(0.0f, 0.0f, 80, 80, Node::nodeSize, Node::nodeSize);
+    Node* hitNode = NULL;
     Node* missNode = NULL;
 
     Node start_button = Node(0.0f, 0.0f, 800, 70, 140, 59);
@@ -24,12 +25,12 @@ int main( int argc, char *argv[])
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
     Boat bPlayer;
-    Boat bBot(1);
+    Boat bBot(Node::nodeSize);
+    Boat bPlayerCopy(Node::nodeSize/2);
 
     Map m1(Node::nodeSize);
+    Map m2(Node::nodeSize/2);
     
-    Graphics gMissNode("Miss.bmp", *renderer);
-    Graphics gHitNode("hitNode.bmp", *renderer);
     Graphics g1("start-button.bmp", *renderer);
     Graphics gScreen;
     
@@ -69,30 +70,36 @@ int main( int argc, char *argv[])
                                 break;
                             }
                         }
-                        else
+                        else if(m1.InRange(mousePos.x, mousePos.y))
                         {
                             if(SDL_PointInRect(&mousePos, bBot.GetBoat(i)->getRect()))
                             {
                                 selected_rect = bBot.GetBoat(i);
-                                cout << "hit";
+                                hitNode = m1.getNode(mousePos.x/Node::nodeSize, mousePos.y/Node::nodeSize);
+                                if(hitNode->GetHit() == -1)
+                                {
+                                    hitNode->GetHit() = 1;
+                                }
 
                                 break;
                             }
                         }
                         
                     }
-                    if(StartGame && selected_rect == NULL)
+                    if(StartGame && selected_rect == NULL && m1.InRange(mousePos.x, mousePos.y))
                     {
-                        cout << "Miss";
                         missNode = m1.getNode(mousePos.x/Node::nodeSize, mousePos.y/Node::nodeSize);
-                        if(!missNode->GetHit())
+                        if(missNode->GetHit() == -1)
                         {
-                            missNode->GetHit() = true;
+                            missNode->GetHit() = 0;
                         }
                     }
                     if(SDL_PointInRect(&mousePos, start_button.getRect()))
                     {
                         StartGame = true;
+                        bPlayer.UpdatePos();
+                        bPlayerCopy = bPlayer;
+                        bPlayerCopy.ChangePos(18, 2, Node::nodeSize/2);
                     }
                 }
                 
@@ -102,15 +109,13 @@ int main( int argc, char *argv[])
                 if(!StartGame)
                 {
                     mousePos = { event.motion.x, event.motion.y };
-                    
-                    int updX = (mousePos.x - clickOffset.x)/Node::nodeSize;
-                    int updY = (mousePos.y - clickOffset.y)/Node::nodeSize;
 
-                    //selected_rect->UpdatePos(updX, updY);
+                    int updX = (mousePos.x)/Node::nodeSize;
+                    int updY = (mousePos.y)/Node::nodeSize;
 
                     if(leftButtonDown && selected_rect != NULL && selected_rect->InRange(updX, updY))
                     {
-                        selected_rect->ChangePos(updX, updY);
+                        selected_rect->ChangePos(updX, updY, Node::nodeSize);
                     }
                 }
                 else
@@ -136,7 +141,6 @@ int main( int argc, char *argv[])
                 break;
 
         }
-    
  
         // clear window
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
@@ -147,7 +151,7 @@ int main( int argc, char *argv[])
             gScreen("Map.bmp", *renderer);
             gScreen.Render(*renderer, screen.getRect(), screen.GetAngle(), SDL_FLIP_NONE);
             //Render Boat to screen
-            bPlayer.DrawBoat(*renderer);
+            bPlayer.DrawBoat(*renderer, Node::nodeSize);
             
             g1.Render(*renderer, start_button.getRect(), start_button.GetAngle(), SDL_FLIP_NONE);
         }
@@ -155,43 +159,20 @@ int main( int argc, char *argv[])
         {
             start_button.~Node();
             g1.~Graphics();
+            //Render background
             gScreen("Map1.bmp", *renderer);
             gScreen.Render(*renderer, screen.getRect(), screen.GetAngle(), SDL_FLIP_NONE);
-            //bBot.DrawBoat(*renderer, *selected_rect);
+            //Render Boat to screen
+            bPlayerCopy.DrawBoat(*renderer, Node::nodeSize/2);
 
-            if(selected_rect!= NULL && selected_rect->getRect()->w == Node::nodeSize*2)
-            {
-                if((mousePos.x - selected_rect->getRect()->x) <= (selected_rect->getRect()->w/2))
-                {
-                    hitNode(selected_rect->getRect()->x, selected_rect->getRect()->y);
-                }
-                else
-                {
-                    hitNode(selected_rect->getRect()->x + Node::nodeSize, selected_rect->getRect()->y);
-                }
-                gHitNode.Render(*renderer, hitNode.getRect(), hitNode.GetAngle(), SDL_FLIP_NONE);
-            }
-            else if(selected_rect != NULL)
-            {
-                if((mousePos.x - selected_rect->getRect()->x) <= (selected_rect->getRect()->w/3))
-                {
-                    hitNode(selected_rect->getRect()->x, selected_rect->getRect()->y);
-                }
-                else if((mousePos.x - selected_rect->getRect()->x) <= (selected_rect->getRect()->w/3*2))
-                {
-                    hitNode(selected_rect->getRect()->x + Node::nodeSize, selected_rect->getRect()->y);
-                }
-                else
-                {
-                    hitNode(selected_rect->getRect()->x + 2*Node::nodeSize, selected_rect->getRect()->y);
-                }
-                gHitNode.Render(*renderer, hitNode.getRect(), hitNode.GetAngle(), SDL_FLIP_NONE);
-            }
-            else if(missNode != NULL && missNode->GetHit())
-            {
-                gMissNode.Render(*renderer, missNode->getRect(), missNode->GetAngle(), SDL_FLIP_NONE);
-            }
-
+            // if(hitNode->GetHit() == 1)
+            // { }
+            // else if(missNode->GetHit() == 0)
+            // {
+            //     turn++;
+            // }
+            
+            m1.checkMap(*renderer);
 
         }
         SDL_RenderPresent(renderer);

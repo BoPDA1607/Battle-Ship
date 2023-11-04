@@ -1,7 +1,7 @@
 #include "D:\PBL2\header\Node.h"
 int Node::nodeSize = 80;
-Node::Node(float xVal, float yVal, int x, int y, int w, int h, float ang)
-    : xVal(xVal), yVal(yVal), angle(ang), isHit(false)
+Node::Node(int xVal, int yVal, int x, int y, int w, int h, float ang)
+    : xVal(xVal), yVal(yVal), angle(ang), isHit(-1)
 { 
     this->rect.x = x;
     this->rect.y = y;
@@ -38,11 +38,11 @@ SDL_Rect* Node::getRect()
 {
     return &(this->rect);
 }
-float Node::GetX()
+int& Node::GetX()
 {
     return this->xVal;
 }
-float Node::GetY()
+int& Node::GetY()
 {
     return this->yVal;
 }
@@ -50,17 +50,17 @@ float Node::GetAngle()
 {
     return this->angle;
 }
-void Node::UpdatePos(const float x, const float y)
+void Node::UpdatePos()
 {
-    this->xVal = int(x);
-    this->yVal = int(y);
+    this->xVal = (this->rect.x - 240)/Node::nodeSize;
+    this->yVal = (this->rect.y - 80)/Node::nodeSize;
 }
-void Node::ChangePos(const int x, const int y)
+void Node::ChangePos(const int x, const int y, const int size)
 {
-    this->rect.x = x*Node::nodeSize;
-    this->rect.y = y*Node::nodeSize;
+    this->rect.x = x*size;
+    this->rect.y = y*size;
 }
-bool& Node::GetHit()
+int& Node::GetHit()
 {
     return this->isHit;
 }

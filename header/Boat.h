@@ -9,10 +9,11 @@ class Boat : protected Map
         static int ListOfBoatSize[3];
     public:
         Boat();
-        Boat(int);
+        Boat(const int);
         ~Boat();
-        bool operator==(SDL_Rect&);
-        void DrawBoat(SDL_Renderer&);
+        Boat& operator=(const Boat&);
+        void DrawBoat(SDL_Renderer&, const int);
         Node* GetBoat(int);
-        void flipBoat(SDL_Renderer&, SDL_Texture*, int, float = 0.0f);
+        void UpdatePos();
+        void ChangePos(const int, const int, const int);
 };

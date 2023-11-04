@@ -3,26 +3,26 @@
 class Node
 {
     protected:
-        float xVal, yVal;
+        int xVal, yVal;
         SDL_Rect rect;
         float angle;
-        bool isHit;
+        int isHit;
     public:
         static int nodeSize;
     public:
-        Node(float = 0.0f, float = 0.0f, int = 0, int = 0, int = 0, int = 0, float = 0.0f);
+        Node(int = 0, int = 0, int = 0, int = 0, int = 0, int = 0, float = 0.0f);
         ~Node();
         bool operator==(const Node&);
         Node& operator=(const Node&);
         Node& operator()(const int, const int);
         SDL_Rect* getRect();
-        float GetX();
-        float GetY();
+        int& GetX();
+        int& GetY();
         float GetAngle();
-        void UpdatePos(const float, const float);
-        void ChangePos(const int, const int);
-        bool& GetHit();
+        virtual void UpdatePos();
+        virtual void ChangePos(const int, const int, const int);
+        int& GetHit();
         void Rotation(float angle);
-        bool InRange(const int, const int);
+        virtual bool InRange(const int, const int);
         
 };

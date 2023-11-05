@@ -15,14 +15,16 @@ class Node
         bool operator==(const Node&);
         Node& operator=(const Node&);
         Node& operator()(const int, const int);
+        Node operator/(const int);
         SDL_Rect* getRect();
         int& GetX();
         int& GetY();
-        float GetAngle();
+        float& GetAngle();
         virtual void UpdatePos();
         virtual void ChangePos(const int, const int, const int);
         int& GetHit();
-        void Rotation(float angle);
+        void Rotation();
         virtual bool InRange(const int, const int);
+        void SwapWH();
         
 };

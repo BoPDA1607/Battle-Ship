@@ -20,10 +20,13 @@ bool Node::operator==(const Node& n)
 }
 Node& Node::operator=(const Node& n)
 {
+    this->xVal = n.xVal;
+    this->yVal = n.yVal;
     this->rect.x = n.rect.x;
     this->rect.y = n.rect.y;
     this->rect.w = n.rect.w;
     this->rect.h = n.rect.h;
+    this->angle = n.angle;
 
     return *this;
 }
@@ -33,6 +36,14 @@ Node& Node::operator()(const int x, const int y)
     this->rect.y = y;
 
     return *this;
+}
+Node Node::operator/(const int i)
+{
+    this->rect.w = this->rect.w/i;
+    this->rect.h = this->rect.h/i;
+
+    return (*this);
+
 }
 SDL_Rect* Node::getRect()
 {
@@ -46,7 +57,7 @@ int& Node::GetY()
 {
     return this->yVal;
 }
-float Node::GetAngle()
+float& Node::GetAngle()
 {
     return this->angle;
 }
@@ -64,12 +75,25 @@ int& Node::GetHit()
 {
     return this->isHit;
 }
-void Node::Rotation(float angle)
+void Node::Rotation()
 {
-    this->angle += angle;
+    if(this->angle == 0)
+    {
+        this->angle = 90;
+    }
+    else
+    {
+        this->angle = 0;
+    }
 }
 bool Node::InRange(const int x, const int y)
 {
     return (x >= 3 && y >= 1
-            && x <= 9-(this->rect.w/Node::nodeSize) && y <= 6);
+            && x <= 9-(this->rect.w/Node::nodeSize) && y <= 7-(this->rect.h/Node::nodeSize));
+}
+void Node::SwapWH()
+{
+    int temp = this->rect.w;
+    this->rect.w = this->rect.h;
+    this->rect.h = temp;
 }

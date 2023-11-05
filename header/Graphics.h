@@ -8,9 +8,9 @@ class Graphics
         SDL_Texture* m_tex;
     public:
         Graphics();
-        Graphics(char*, SDL_Renderer&);
+        Graphics(const char*, SDL_Renderer&);
         ~Graphics();
-        Graphics& operator()(char*, SDL_Renderer&);
+        Graphics& operator()(const char*, SDL_Renderer&);
         void Render(SDL_Renderer&, SDL_Rect*, float = 0.0f, SDL_RendererFlip = SDL_FLIP_NONE);
         float Rotation(float&);
 };

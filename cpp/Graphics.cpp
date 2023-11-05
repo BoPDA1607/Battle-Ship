@@ -2,7 +2,7 @@
 
 Graphics::Graphics()
 { }
-Graphics::Graphics(char* filepath, SDL_Renderer& rend)
+Graphics::Graphics(const char* filepath, SDL_Renderer& rend)
 { 
     SDL_Surface* surface = SDL_LoadBMP(filepath);
     this->m_tex = SDL_CreateTextureFromSurface(&rend, surface);
@@ -12,7 +12,7 @@ Graphics::~Graphics()
 { 
     SDL_DestroyTexture(this->m_tex);
 }
-Graphics& Graphics::operator()(char* filepath, SDL_Renderer& rend)
+Graphics& Graphics::operator()(const char* filepath, SDL_Renderer& rend)
 {
     SDL_Surface* surface = SDL_LoadBMP(filepath);
     this->m_tex = SDL_CreateTextureFromSurface(&rend, surface);

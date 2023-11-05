@@ -29,34 +29,56 @@ Boat& Boat::operator=(const Boat& b)
 {
     for(int i = 0; i < Boat::boatNums; i++)
     {
-        (this->p + i)->GetX() = (b.p + i)->GetX();
-        (this->p + i)->GetY() = (b.p + i)->GetY();
+        *(this->p + i) = *(b.p + i);
+        *(this->p + i) = *(b.p + i)/2;
     }
+
+    return (*this);
 }
 void Boat::DrawBoat(SDL_Renderer& renderer, const int size)
 {
     Graphics boat1;
     Graphics boat2;
+    Graphics boat3;
+    Graphics boat4;
     if(size == 80)
     {
         boat1("Ship2.bmp", renderer);
         boat2("Ship3.bmp", renderer);
+        boat3("Ship4.bmp", renderer);
+        boat4("Ship5.bmp", renderer);
     }
     else
     {
         boat1("Ship21.bmp", renderer);
         boat2("Ship31.bmp", renderer);
+        boat3("Ship41.bmp", renderer);
+        boat4("Ship51.bmp", renderer);
     }
     
     for(int i = 0; i < Boat::boatNums; i++)
     {
         if(i == 0)
         {
-            boat1.Render(renderer, (*(this->p + i)).getRect(), (this->p + i)->GetAngle(), SDL_FLIP_NONE);
+            if((this->p + i)->GetAngle() == 0)
+            {
+                boat1.Render(renderer, (this->p + i)->getRect(), 0, SDL_FLIP_NONE);
+            }
+            else
+            {
+                boat3.Render(renderer, (this->p + i)->getRect(), 0, SDL_FLIP_NONE);
+            }
         }
         else
         {
-            boat2.Render(renderer, (*(this->p + i)).getRect(), (this->p + i)->GetAngle(), SDL_FLIP_NONE);
+            if((this->p + i)->GetAngle() == 0)
+            {
+                boat2.Render(renderer, (this->p + i)->getRect(), 0, SDL_FLIP_NONE);
+            }
+            else
+            {
+                boat4.Render(renderer, (this->p + i)->getRect(), 0, SDL_FLIP_NONE);
+            }
         }
     }
 

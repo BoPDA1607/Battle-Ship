@@ -5,7 +5,7 @@ const int WIDTH = 1000, HEIGHT = 600;
 int main( int argc, char *argv[])
 {
     bool GameIsRunning = true, leftButtonDown = false, StartGame = false;
-    // int turn = 0;
+    int turn = 0;
     SDL_Event event;
     SDL_Point mousePos;
     SDL_Point clickOffset;
@@ -130,10 +130,12 @@ int main( int argc, char *argv[])
                     switch (event.key.keysym.sym)
                     {
                         case SDLK_RIGHT:
-                            selected_rect->Rotation(90);
+                            selected_rect->Rotation();
+                            selected_rect->SwapWH();
                             break;
                         case SDLK_LEFT:
-                            selected_rect->Rotation(-90);
+                            selected_rect->Rotation();
+                            selected_rect->SwapWH();
                             break;
                     }
                 }
@@ -164,13 +166,6 @@ int main( int argc, char *argv[])
             gScreen.Render(*renderer, screen.getRect(), screen.GetAngle(), SDL_FLIP_NONE);
             //Render Boat to screen
             bPlayerCopy.DrawBoat(*renderer, Node::nodeSize/2);
-
-            // if(hitNode->GetHit() == 1)
-            // { }
-            // else if(missNode->GetHit() == 0)
-            // {
-            //     turn++;
-            // }
             
             m1.checkMap(*renderer);
 

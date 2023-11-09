@@ -36,13 +36,13 @@ void Map::checkMap(SDL_Renderer& rend, const int size, bool& isStart)
     Graphics gHitNode;
     if(size == 80)
     {
-        gMissNode("Miss.bmp", rend);
-        gHitNode("hitNode.bmp", rend);
+        gMissNode("images/Miss.bmp", rend);
+        gHitNode("images/hitNode.bmp", rend);
     }
     else
     {
-        gMissNode("Miss1.bmp", rend);
-        gHitNode("hitNode1.bmp", rend);
+        gMissNode("images/Miss1.bmp", rend);
+        gHitNode("images/hitNode1.bmp", rend);
     }
     
     for(int i = 0; i < Map::mapSize; i++)

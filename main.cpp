@@ -36,8 +36,8 @@ int main( int argc, char *argv[])
     Map m3(3, 1, Node::nodeSize);
 
     //Load image
-    Graphics gRB("replay.bmp", *renderer);
-    Graphics gHB("Home.bmp", *renderer);
+    Graphics gRB("images/replay.bmp", *renderer);
+    Graphics gHB("images/Home.bmp", *renderer);
     
     
     while (GameIsRunning)
@@ -255,7 +255,7 @@ int main( int argc, char *argv[])
         //Check if game is end
         if(endGame)
         {
-            Graphics gEScreen("win.bmp", *renderer);
+            Graphics gEScreen("images/win.bmp", *renderer);
             gEScreen.Render(*renderer, endScreen.getRect());
             gRB.Render(*renderer, replay_button.getRect());
             gHB.Render(*renderer, home_button.getRect());

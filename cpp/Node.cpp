@@ -112,11 +112,11 @@ void Node::DrawScreen(SDL_Renderer& rend, bool isStart, bool isPlay)
     if(!isPlay) return;
     if(!isStart)
     {
-        gScreen("Map.bmp", rend);
+        gScreen("images/Map.bmp", rend);
     }
     else 
     {
-        gScreen("Map1.bmp", rend);
+        gScreen("images/Map1.bmp", rend);
     }
     gScreen.Render(rend, &this->rect, this->angle);
 }
@@ -125,13 +125,13 @@ void Node::DrawSB(SDL_Renderer& rend, bool isStart, bool isPlay)
     Graphics gSB;
     if(!isStart && isPlay)
     {
-        gSB("start-button.bmp", rend);
+        gSB("images/start-button.bmp", rend);
     }
     gSB.Render(rend, &this->rect, this->angle);
 }
 void Node::DrawPB(SDL_Renderer& rend, bool isPlay)
 {
-    Graphics gPB("Play-Button.bmp", rend);
+    Graphics gPB("images/Play-Button.bmp", rend);
     if(!isPlay)
     {
         gPB.Render(rend, &this->rect, this->angle);
@@ -139,7 +139,7 @@ void Node::DrawPB(SDL_Renderer& rend, bool isPlay)
 }
 void Node::DrawTitle(SDL_Renderer& rend, bool isPlay)
 {
-    Graphics gT("Title-Screen.bmp", rend);
+    Graphics gT("images/Title-Screen.bmp", rend);
     if(!isPlay)
     {
         gT.Render(rend, &this->rect, this->angle);

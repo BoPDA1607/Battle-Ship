@@ -56,17 +56,17 @@ void Boat::DrawBoat(SDL_Renderer& renderer, bool isStart)
     Graphics boat4;
     if(!isStart)
     {
-        boat1("Ship2.bmp", renderer);
-        boat2("Ship3.bmp", renderer);
-        boat3("Ship4.bmp", renderer);
-        boat4("Ship5.bmp", renderer);
+        boat1("images/Ship2.bmp", renderer);
+        boat2("images/Ship3.bmp", renderer);
+        boat3("images/Ship4.bmp", renderer);
+        boat4("images/Ship5.bmp", renderer);
     }
     else
     {
-        boat1("Ship21.bmp", renderer);
-        boat2("Ship31.bmp", renderer);
-        boat3("Ship41.bmp", renderer);
-        boat4("Ship51.bmp", renderer);
+        boat1("images/Ship21.bmp", renderer);
+        boat2("images/Ship31.bmp", renderer);
+        boat3("images/Ship41.bmp", renderer);
+        boat4("images/Ship51.bmp", renderer);
     }
     
     for(int i = 0; i < Boat::boatNums; i++)
@@ -120,10 +120,10 @@ void Boat::ChangePos(const int x0, const int y0, const int size)
 }
 void Boat::CheckBoat(SDL_Renderer& renderer, const int size)
 {
-    Graphics boat1("Ship2.bmp", renderer);
-    Graphics boat2("Ship3.bmp", renderer);
-    Graphics boat3("Ship4.bmp", renderer);
-    Graphics boat4("Ship5.bmp", renderer);
+    Graphics boat1("images/Ship2.bmp", renderer);
+    Graphics boat2("images/Ship3.bmp", renderer);
+    Graphics boat3("images/Ship4.bmp", renderer);
+    Graphics boat4("images/Ship5.bmp", renderer);
     
     for(int i = 0; i < Boat::boatNums; i++)
     {

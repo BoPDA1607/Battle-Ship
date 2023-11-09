@@ -1,38 +1,44 @@
 #include <iostream>
-#include "header\Boat.h"
+#include "header\bot.h"
 const int WIDTH = 1000, HEIGHT = 600;
 
 int main( int argc, char *argv[])
 {
-    bool GameIsRunning = true, leftButtonDown = false, StartGame = false;
+    bool GameIsRunning = true, leftButtonDown = false, StartGame = false, PlayGame = false, endGame = false;
     int turn = 0;
     SDL_Event event;
     SDL_Point mousePos;
-    SDL_Point clickOffset;
-    Node* selected_rect;
+    Node* selected_rect = NULL;
 
-    Node* hitNode = NULL;
-    Node* missNode = NULL;
+    Node* shootNode = NULL;
 
-    Node start_button = Node(0.0f, 0.0f, 800, 70, 140, 59);
-    Node screen = Node(0.0f, 0.0f, 0, 0, 1000, 600);
+    Node start_button = Node(0, 0, 800, 70, 140, 59);
+    Node play_button = Node(0, 0, 350, 450, 300, 125);
+    Node replay_button = Node(0, 0, 275, 380, 220, 59);
+    Node home_button = Node(0, 0, 497, 380, 228, 59);
+
+    Node screen = Node(0, 0, 0, 0, 1000, 600);
+    Node titleScreen = Node(0, 0, 0, 0, 1000, 600);
+    Node endScreen = Node(0, 0, 275, 145, 450, 250);
 
     //Init SDL
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* window = SDL_CreateWindow("Battle Ship",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
-    Boat bPlayer;
-    Boat bBot(Node::nodeSize);
-    Boat bPlayerCopy(Node::nodeSize/2);
+    Boat bPlayer(3, 1, Node::nodeSize);
+    Boat bBot(1, 1, Node::nodeSize);
 
-    Map m1(Node::nodeSize);
-    Map m2(Node::nodeSize/2);
+    Map m1(1, 1, Node::nodeSize);
+    Map m2(18, 2, Node::nodeSize/2);
+    Map m3(3, 1, Node::nodeSize);
+
+    //Load image
+    Graphics gRB("replay.bmp", *renderer);
+    Graphics gHB("Home.bmp", *renderer);
     
-    Graphics g1("start-button.bmp", *renderer);
-    Graphics gScreen;
     
     while (GameIsRunning)
     {
@@ -45,7 +51,7 @@ int main( int argc, char *argv[])
                 break;
 
             case SDL_MOUSEBUTTONUP:
-                if(leftButtonDown && event.button.button == SDL_BUTTON_LEFT)
+                if(leftButtonDown && event.button.button == SDL_BUTTON_LEFT && turn == 0)
                 {
                     leftButtonDown = false;
                     selected_rect = NULL;
@@ -54,62 +60,101 @@ int main( int argc, char *argv[])
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                if(!leftButtonDown && event.button.button == SDL_BUTTON_LEFT)
+                if(!leftButtonDown && event.button.button == SDL_BUTTON_LEFT && turn == 0)
                 {
                     leftButtonDown = true;
-                    for(int i = 0; i < Boat::boatNums; i++)
+                    if(!endGame)
                     {
-                        if(!StartGame)
+                        if(SDL_PointInRect(&mousePos, titleScreen.getRect()))
                         {
-                            if(SDL_PointInRect(&mousePos, bPlayer.GetBoat(i)->getRect()))
-                            {
-                                selected_rect = bPlayer.GetBoat(i);
-                                clickOffset.x = mousePos.x - selected_rect->GetX();
-                                clickOffset.y = mousePos.y - selected_rect->GetY();
-
-                                break;
-                            }
+                            PlayGame = true;
                         }
-                        else if(m1.InRange(mousePos.x, mousePos.y))
+                        for(int i = 0; i < Boat::boatNums; i++)
                         {
-                            if(SDL_PointInRect(&mousePos, bBot.GetBoat(i)->getRect()))
+                            if(!StartGame)
                             {
-                                selected_rect = bBot.GetBoat(i);
-                                hitNode = m1.getNode(mousePos.x/Node::nodeSize, mousePos.y/Node::nodeSize);
-                                if(hitNode->GetHit() == -1)
+                                if(SDL_PointInRect(&mousePos, bPlayer.GetBoat(i)->getRect()))
                                 {
-                                    hitNode->GetHit() = 1;
-                                }
+                                    selected_rect = bPlayer.GetBoat(i);
 
-                                break;
+                                    break;
+                                }
                             }
+                            else if(m1.InRange(mousePos.x, mousePos.y))
+                            {
+                                if(SDL_PointInRect(&mousePos, bBot.GetBoat(i)->getRect()))
+                                {
+                                    selected_rect = bBot.GetBoat(i);
+                                    shootNode = m1.getNode(mousePos.x/Node::nodeSize, mousePos.y/Node::nodeSize);
+
+                                    break;
+                                }
+                            }
+                            
                         }
-                        
-                    }
-                    if(StartGame && selected_rect == NULL && m1.InRange(mousePos.x, mousePos.y))
-                    {
-                        missNode = m1.getNode(mousePos.x/Node::nodeSize, mousePos.y/Node::nodeSize);
-                        if(missNode->GetHit() == -1)
+                        if(StartGame && selected_rect == NULL && m1.InRange(mousePos.x, mousePos.y))
                         {
-                            missNode->GetHit() = 0;
+                            shootNode = m1.getNode(mousePos.x/Node::nodeSize, mousePos.y/Node::nodeSize);
+                            
+                        }
+                        if(SDL_PointInRect(&mousePos, start_button.getRect()))
+                        {
+                            bPlayer.UpdatePos();
+                            //Set place value in map
+                            bPlayer.PointInBoat(m3);
+                            //Check if place boat in map is valid
+                            if(m3.PlaceInMap())
+                            {
+                                StartGame = true;
+                                bPlayer.UpdatePos();
+                                bPlayer = bPlayer;
+                                bPlayer.ChangePos(18, 2, Node::nodeSize/2);
+                                bPlayer.PointInBoat(m2);
+                            }
+                            else
+                            {
+                                cout << "WARNING: DAT TAU` TRUNG` ROI` KIA`";
+                                //Set place value to 0
+                                m3.SetDefault(0);
+                            }
+                            
                         }
                     }
-                    if(SDL_PointInRect(&mousePos, start_button.getRect()))
+                    else
                     {
-                        StartGame = true;
-                        bPlayer.UpdatePos();
-                        bPlayerCopy = bPlayer;
-                        bPlayerCopy.ChangePos(18, 2, Node::nodeSize/2);
+                        if(SDL_PointInRect(&mousePos, replay_button.getRect()))
+                        {
+                            StartGame = false;
+                            bPlayer(3, 1, Node::nodeSize);
+                            bBot(1, 1, Node::nodeSize);
+
+                            m1(1, 1, Node::nodeSize);
+                            m2(18, 2, Node::nodeSize/2);
+                            m3.SetDefault(0);
+                            endGame = false;
+                        }
+                        if(SDL_PointInRect(&mousePos, home_button.getRect()))
+                        {
+                            PlayGame = false;
+                            StartGame = false;
+                            bPlayer(3, 1, Node::nodeSize);
+                            bBot(1, 1, Node::nodeSize);
+
+                            m1(1, 1, Node::nodeSize);
+                            m2(18, 2, Node::nodeSize/2);
+                            m3.SetDefault(0);
+                            endGame = false;
+                        }
                     }
+                    
                 }
                 
                 break;
 
             case  SDL_MOUSEMOTION:
+                mousePos = { event.motion.x, event.motion.y};
                 if(!StartGame)
                 {
-                    mousePos = { event.motion.x, event.motion.y };
-
                     int updX = (mousePos.x)/Node::nodeSize;
                     int updY = (mousePos.y)/Node::nodeSize;
 
@@ -118,10 +163,6 @@ int main( int argc, char *argv[])
                         selected_rect->ChangePos(updX, updY, Node::nodeSize);
                     }
                 }
-                else
-                {
-                    mousePos = { event.motion.x, event.motion.y };
-                }
                             
                 break;
             case SDL_KEYDOWN:
@@ -129,11 +170,7 @@ int main( int argc, char *argv[])
                 {
                     switch (event.key.keysym.sym)
                     {
-                        case SDLK_RIGHT:
-                            selected_rect->Rotation();
-                            selected_rect->SwapWH();
-                            break;
-                        case SDLK_LEFT:
+                        case SDLK_r:
                             selected_rect->Rotation();
                             selected_rect->SwapWH();
                             break;
@@ -147,29 +184,84 @@ int main( int argc, char *argv[])
         // clear window
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(renderer);
-        if(!StartGame)
-        {
-            //Render background
-            gScreen("Map.bmp", *renderer);
-            gScreen.Render(*renderer, screen.getRect(), screen.GetAngle(), SDL_FLIP_NONE);
-            //Render Boat to screen
-            bPlayer.DrawBoat(*renderer, Node::nodeSize);
-            
-            g1.Render(*renderer, start_button.getRect(), start_button.GetAngle(), SDL_FLIP_NONE);
-        }
-        else
-        {
-            start_button.~Node();
-            g1.~Graphics();
-            //Render background
-            gScreen("Map1.bmp", *renderer);
-            gScreen.Render(*renderer, screen.getRect(), screen.GetAngle(), SDL_FLIP_NONE);
-            //Render Boat to screen
-            bPlayerCopy.DrawBoat(*renderer, Node::nodeSize/2);
-            
-            m1.checkMap(*renderer);
 
+        //Title Screen
+        titleScreen.DrawTitle(*renderer, PlayGame);
+        play_button.DrawPB(*renderer, PlayGame);
+
+        //Play Screen
+        screen.DrawScreen(*renderer, StartGame, PlayGame);
+        start_button.DrawSB(*renderer, StartGame, PlayGame);
+        bPlayer.DrawBoat(*renderer, StartGame);
+
+        if(shootNode != NULL && turn == 0)
+        {
+            if(selected_rect != NULL && shootNode->GetHit() == -1)
+            {
+                shootNode->GetHit() = 1;
+                selected_rect->GetHit() += 1;
+                bBot.GetisSink() += 1;
+                turn = 1;
+                selected_rect = NULL;
+            }
+            else if(shootNode->GetHit() == -1)
+            {
+                shootNode->GetHit() = 0;
+                turn = 1;
+            }
+
+            shootNode = NULL;
         }
+        else if(turn == 1)
+        {
+            int x, y, seed = 1607;
+            do
+            {
+                x = GenPos(seed);
+                seed += 34;
+                y = GenPos(seed);
+                shootNode = m2.getNode(x, y);
+            } while (shootNode->GetHit() == 0 || shootNode->GetHit() == 1);
+            
+            // shootNode = bPlayer.PointInBoat(x, y, m2, Node::nodeSize/2);
+            if(shootNode->GetPlace() == 1)
+            {
+                shootNode->GetHit() = 1;
+                bPlayer.GetisSink() += 1;
+            }
+            else
+            {
+                shootNode->GetHit() = 0;
+            }
+            
+            shootNode = NULL;
+            
+            turn = 0;
+        }
+
+        m1.checkMap(*renderer, Node::nodeSize, StartGame);
+        m2.checkMap(*renderer, Node::nodeSize/2, StartGame);
+        //Check if boat is hit
+        bBot.CheckBoat(*renderer, Node::nodeSize);
+        //Check if all boat is sink
+        if(bBot.GetisSink() == Boat::SinkBoat && !endGame)
+        {
+            endGame = true;
+        }
+        else if(bPlayer.GetisSink() == Boat::SinkBoat && !endGame)
+        {
+            endGame = true;
+        }
+        //Check if game is end
+        if(endGame)
+        {
+            Graphics gEScreen("win.bmp", *renderer);
+            gEScreen.Render(*renderer, endScreen.getRect());
+            gRB.Render(*renderer, replay_button.getRect());
+            gHB.Render(*renderer, home_button.getRect());
+            turn = 0;
+        }
+
         SDL_RenderPresent(renderer);
     }
    

@@ -1,14 +1,13 @@
 #include "D:\PBL2\header\Node.h"
 int Node::nodeSize = 80;
-Node::Node(int xVal, int yVal, int x, int y, int w, int h, float ang)
-    : xVal(xVal), yVal(yVal), angle(ang), isHit(-1)
+Node::Node(int xVal, int yVal, int x, int y, int w, int h, float ang, int hit, int place)
+    : xVal(xVal), yVal(yVal), angle(ang), isPlace(place)
 { 
     this->rect.x = x;
     this->rect.y = y;
     this->rect.w = w;
     this->rect.h = h;
-    // this->xVal = x;
-    // this->yVal = y;
+    this->isHit = hit;
 }
 Node::~Node()
 { 
@@ -27,6 +26,8 @@ Node& Node::operator=(const Node& n)
     this->rect.w = n.rect.w;
     this->rect.h = n.rect.h;
     this->angle = n.angle;
+    this->isHit = n.isHit;
+    this->isPlace = n.isPlace;
 
     return *this;
 }
@@ -37,13 +38,17 @@ Node& Node::operator()(const int x, const int y)
 
     return *this;
 }
-Node Node::operator/(const int i)
+Node& Node::operator/(const int i)
 {
     this->rect.w = this->rect.w/i;
     this->rect.h = this->rect.h/i;
 
     return (*this);
-
+}
+ostream& operator<<(ostream& o, const Node& n)
+{
+    o << n.rect.w << " " << n.rect.h << endl;
+    return o;
 }
 SDL_Rect* Node::getRect()
 {
@@ -71,6 +76,10 @@ void Node::ChangePos(const int x, const int y, const int size)
     this->rect.x = x*size;
     this->rect.y = y*size;
 }
+int& Node::GetPlace()
+{
+    return this->isPlace;
+}
 int& Node::GetHit()
 {
     return this->isHit;
@@ -96,4 +105,44 @@ void Node::SwapWH()
     int temp = this->rect.w;
     this->rect.w = this->rect.h;
     this->rect.h = temp;
+}
+void Node::DrawScreen(SDL_Renderer& rend, bool isStart, bool isPlay)
+{
+    Graphics gScreen;
+    if(!isPlay) return;
+    if(!isStart)
+    {
+        gScreen("Map.bmp", rend);
+    }
+    else 
+    {
+        gScreen("Map1.bmp", rend);
+    }
+    gScreen.Render(rend, &this->rect, this->angle);
+}
+void Node::DrawSB(SDL_Renderer& rend, bool isStart, bool isPlay)
+{
+    Graphics gSB;
+    if(!isStart && isPlay)
+    {
+        gSB("start-button.bmp", rend);
+    }
+    gSB.Render(rend, &this->rect, this->angle);
+}
+void Node::DrawPB(SDL_Renderer& rend, bool isPlay)
+{
+    Graphics gPB("Play-Button.bmp", rend);
+    if(!isPlay)
+    {
+        gPB.Render(rend, &this->rect, this->angle);
+    }
+}
+void Node::DrawTitle(SDL_Renderer& rend, bool isPlay)
+{
+    Graphics gT("Title-Screen.bmp", rend);
+    if(!isPlay)
+    {
+        gT.Render(rend, &this->rect, this->angle);
+    }
+    
 }

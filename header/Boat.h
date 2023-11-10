@@ -15,7 +15,7 @@ class Boat : protected Map
         Boat& operator=(const Boat&);
         Boat& operator()(const int, const int, const int);
         friend ostream& operator<<(ostream&, const Boat&);
-        void DrawBoat(SDL_Renderer&, bool);
+        void DrawBoat(SDL_Renderer&, bool, bool);
         Node* GetBoat(int);
         int& GetisSink();
         void UpdatePos();

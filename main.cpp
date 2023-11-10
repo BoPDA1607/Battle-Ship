@@ -192,7 +192,7 @@ int main( int argc, char *argv[])
         //Play Screen
         screen.DrawScreen(*renderer, StartGame, PlayGame);
         start_button.DrawSB(*renderer, StartGame, PlayGame);
-        bPlayer.DrawBoat(*renderer, StartGame);
+        bPlayer.DrawBoat(*renderer, StartGame, PlayGame);
 
         if(shootNode != NULL && turn == 0)
         {

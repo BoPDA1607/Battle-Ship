@@ -65,7 +65,7 @@ int main( int argc, char *argv[])
                     leftButtonDown = true;
                     if(!endGame)
                     {
-                        if(SDL_PointInRect(&mousePos, titleScreen.getRect()))
+                        if(SDL_PointInRect(&mousePos, play_button.getRect()))
                         {
                             PlayGame = true;
                         }

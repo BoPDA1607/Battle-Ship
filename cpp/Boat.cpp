@@ -48,8 +48,9 @@ ostream& operator<<(ostream& o, const Boat& b)
 
     return o;
 }
-void Boat::DrawBoat(SDL_Renderer& renderer, bool isStart)
+void Boat::DrawBoat(SDL_Renderer& renderer, bool isStart, bool isPlay)
 {
+    if(!isPlay) return;
     Graphics boat1;
     Graphics boat2;
     Graphics boat3;

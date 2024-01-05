@@ -1,5 +1,5 @@
-#include "D:\PBL2.1\header\Node.h"
-int Node::nodeSize[3] = {80, 60, 48};
+#include "D:\Battleship-main\header\Node.h"
+int Node::nodeSize = 80;
 Node::Node(int xVal, int yVal, int x, int y, int w, int h, float ang, int hit, int place)
     : xVal(xVal), yVal(yVal), angle(ang), isPlace(place)
 {
@@ -66,21 +66,15 @@ float& Node::GetAngle()
 {
     return this->angle;
 }
-void Node::UpdatePos(const int ind)
+void Node::UpdatePos()
 {
-    int size = Node::nodeSize[ind];
-    this->xVal = (this->rect.x - 240)/size;
-    this->yVal = (this->rect.y - 80)/size;
+    this->xVal = (this->rect.x - 240)/Node::nodeSize;
+    this->yVal = (this->rect.y - 80)/Node::nodeSize;
 }
-void Node::ChangePos(const int x, const int y, const int ind)
+void Node::ChangePos(const int x, const int y, const int size)
 {
-    int size = Node::nodeSize[ind];
     this->rect.x = x*size;
     this->rect.y = y*size;
-}
-void Node::ChangeXPos(const int x)
-{
-    this->rect.x = x*180 + 93;
 }
 int& Node::GetPlace()
 {
@@ -94,22 +88,23 @@ void Node::Rotation()
 {
     if(this->angle == 0)
     {
-        this->angle = 90;
+        {
+            this->angle = 90;
+            this->SwapWH();
+        }
     }
     else
     {
-        this->angle = 0;
+        {
+            this->angle = 0;
+            this->SwapWH();
+        }
     }
 }
-bool Node::InRange(const int x, const int y, const int ind)
+bool Node::InRange(const int x, const int y)
 {
-    int size = Node::nodeSize[ind];
     return (x >= 3 && y >= 1
-            && x <= 9-(this->rect.w/size) && y <= 7-(this->rect.h/size));
-}
-bool Node::InRange(const int x)
-{
-    return (x >= 0 && x <= 2);
+            && x <= 9-(this->rect.w/Node::nodeSize) && y <= 7-(this->rect.h/Node::nodeSize));
 }
 void Node::SwapWH()
 {
@@ -117,73 +112,62 @@ void Node::SwapWH()
     this->rect.w = this->rect.h;
     this->rect.h = temp;
 }
-void Node::ShowScreen(SDL_Renderer& rend, bool isStart, bool isPlay, bool isSave, const int ind)
+void Node::DrawScreen(SDL_Renderer& rend, bool isStart, bool isPlay)
 {
-    if(!isPlay) return;
     Graphics gScreen;
-    bool check = (!isSave || !isStart);
-    if(ind == 0)
+    if(!isPlay) return;
+    if(!isStart)
     {
-        if(!isSave || !isStart)
-            gScreen("images/Map.bmp", rend);
-        else if(isStart)
-            gScreen("images/Map1.bmp", rend);
-    } 
-    else if(ind == 1)
-    {
-        if(!isSave || !isStart)
-            gScreen("images/Map8.bmp", rend);
-        else if(isStart)
-            gScreen("images/Map18.bmp", rend);
+        gScreen("images/Map.bmp", rend);
     }
-    else if(ind == 2)
+    else 
     {
-        if(!isSave || !isStart)
-            gScreen("images/Map10.bmp", rend);
-        else if(isStart)
-            gScreen("images/Map110.bmp", rend);
+        gScreen("images/Map1.bmp", rend);
     }
     gScreen.Render(rend, &this->rect, this->angle);
 }
-void Node::ShowSB(SDL_Renderer& rend, bool isStart, bool isPlay, bool isSave)
+void Node::DrawSB(SDL_Renderer& rend, bool isStart, bool isPlay)
 {
     Graphics gSB;
-    if(isPlay && !isStart && isSave)
+    if(!isStart && isPlay)
     {
         gSB("images/start-button.bmp", rend);
     }
-    else if(isPlay && !isSave)
-    {
-        gSB("images/save-button.bmp", rend);
-    }
     gSB.Render(rend, &this->rect, this->angle);
 }
-void Node::ShowPB(SDL_Renderer& rend, bool isPlay, bool option)
+void Node::DrawPB(SDL_Renderer& rend, bool isPlay)
 {
-    if(isPlay || option) return;
     Graphics gPB("images/Play-Button.bmp", rend);
-    gPB.Render(rend, &this->rect, this->angle);
+    if(!isPlay)
+    {
+        gPB.Render(rend, &this->rect, this->angle);
+    }
 }
-void Node::ShowTitle(SDL_Renderer& rend, bool isPlay, bool option)
+void Node::DrawTitle(SDL_Renderer& rend, bool isPlay)
 {
-    if(isPlay) return;
-    Graphics gT;
-    if(option)
-        gT("images/option-screen.bmp", rend);
-    else
-        gT("images/Title-Screen.bmp", rend);
-    gT.Render(rend, &this->rect, this->angle);
+    Graphics gT("images/Title-Screen.bmp", rend);
+    if(!isPlay)
+    {
+        gT.Render(rend, &this->rect, this->angle);
+    }
     
 }
-void Node::ShowOB(SDL_Renderer& rend, bool option)
+void ShowTurn(SDL_Renderer& rend, bool isStart, int& turn, Node& Pturn, Node& Bturn, Node& Turn, int& isDraw)
 {
-    if(option) return;
-    Graphics gOB("images/option-button.bmp", rend);
-    gOB.Render(rend, &this->rect, this->angle);
-}
-void Node::SlideButton(SDL_Renderer& rend, bool option)
-{
-    if(!option) return;
-    Graphics gSlB("images/slider-button.bmp", rend);
-    gSlB.Render(rend, &this->rect, this->angle);
+    if(!isStart) return;
+    Graphics gTurn;
+    Graphics gTurn1;
+    Node whoTurn = Node(-1);
+
+    if(turn == 0)
+    {
+        gTurn("images/Pturn.bmp", rend);
+        gTurn1("images/turn.bmp", rend);
+        whoTurn = Pturn;
+    }
+    gTurn1.Render(rend, whoTurn.getRect());
+    if(isDraw++ <= 10)
+    {
+        gTurn.Render(rend, Turn.getRect());
+    }
 }

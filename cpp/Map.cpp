@@ -1,87 +1,75 @@
-#include "D:\PBL2.1\header\Map.h"
+#include "D:\Battleship-main\header\Map.h"
 
-int Map::mapSize[3] = {6, 8, 10};
+int Map::mapSize = 6;
 
 Map::Map()
-    : isFull(mapSize[0]*mapSize[0])
+    : isFull(mapSize*mapSize)
 { }
-Map::Map(const int x0, const int y0, const int ind)
+Map::Map(const int x0, const int y0, const int size)
 {
-    this->currentSize = Map::mapSize[ind];
-    int size = Node::nodeSize[ind]; cout << size;
-    this->m = new Node*[this->currentSize];
-    for(int i = 0; i < this->currentSize; i++)
+    this->m = new Node*[Map::mapSize];
+    for(int i = 0; i < Map::mapSize; i++)
     {
-        *(this->m + i) = new Node[this->currentSize];
-        for(int j = 0; j < this->currentSize; j++)
+        *(this->m + i) = new Node[Map::mapSize];
+        for(int j = 0; j < Map::mapSize; j++)
         {
-            *(*(this->m + i) + j) = Node(j + x0, i + y0, (j+x0)*size, (i+y0)*size, size, size, 0.0f);
+            *(*(this->m + i) + j) = Node(j + 1, i + 1, (j+x0)*size, (i+y0)*size, size, size, 0.0f);
         }
     }
 }
 Map::~Map()
 { 
-    for(int i = 0; i < this->currentSize; i++)
+    for(int i = 0; i < Map::mapSize; i++)
     {
         delete[] *(this->m + i);
     }
     delete[] this->m;
 }
-Node* Map::getNode(int i, int j, const int x0, const int y0, const int ind)
+Node* Map::getNode(const int i, const int j)
 {
-    cout << "get node" << endl;
-    return (*(this->m + (j-x0)) + (i-y0));
+    return (*(this->m + (j-1)) + (i-1));
 }
-void Map::checkMap(SDL_Renderer& rend, const int ind, bool& isStart)
+void Map::checkMap(SDL_Renderer& rend, const int size, bool& isStart)
 {
     if(!isStart) return;
-    int size = Node::nodeSize[ind];
     Graphics gMissNode;
     Graphics gHitNode;
-    
     if(size == 80)
-    {
-        gMissNode("images/Miss.bmp", rend);
-        gHitNode("images/hitNode.bmp", rend);
-    }
-    else if(size == 60)
     {
         gMissNode("images/Miss.bmp", rend);
         gHitNode("images/hitNode.bmp", rend);
     }
     else
     {
-        gMissNode("images/Miss.bmp", rend);
-        gHitNode("images/hitNode.bmp", rend);
+        gMissNode("images/Miss1.bmp", rend);
+        gHitNode("images/hitNode1.bmp", rend);
     }
-    for(int i = 0; i < this->currentSize; i++)
+    
+    for(int i = 0; i < Map::mapSize; i++)
     {
-        for(int j = 0; j < this->currentSize; j++)
+        for(int j = 0; j < Map::mapSize; j++)
         {
             if((*(this->m + i) + j)->GetHit() == 1)
             {   
-                cout << "Hit" << endl;
                 gHitNode.Render(rend, (*(this->m + i) + j)->getRect(), 0.0f);
             }
             else if((*(this->m + i) + j)->GetHit() == 0)
             {
-                cout << "Miss" << endl;
                 gMissNode.Render(rend, (*(this->m + i) + j)->getRect(), 0.0f);
             }
         }
     }
 }
-bool Map::InRange(const int x, const int y, const int size)
+bool Map::InRange(const int x, const int y)
 {
-    cout << this->currentSize << endl;
     return (x >= (*(this->m + 0) + 0)->getRect()->x && y >= (*(this->m + 0) + 0)->getRect()->y
-         && x <= (*(this->m + this->currentSize-1) + this->currentSize-1)->getRect()->x + size && y <= (*(this->m + this->currentSize-1) + this->currentSize-1)->getRect()->y + size);
+         && x <= (*(this->m + 5) + 5)->getRect()->x + 80 && y <= (*(this->m + 5) + 5)->getRect()->y + 80);
 }
 bool Map::PlaceInMap()
 {
-    for(int i = 0; i < this->currentSize; i++)
+    for(int i = 0; i < Map::mapSize; i++)
     {
-        for(int j = 0; j < this->currentSize;j++)
+        for(int j = 0; j < Map::mapSize; j++)
         {
             if((*(this->m + i) + j)->GetPlace() > 1)
                 return false;
@@ -90,15 +78,13 @@ bool Map::PlaceInMap()
 
     return true;
 }
-Map& Map::operator()(const int x0, const int y0, const int ind)
+Map& Map::operator()(const int x0, const int y0, const int size)
 {
-    this->currentSize = Map::mapSize[ind];
-    int size = Node::nodeSize[ind];
-    for(int i = 0; i < this->currentSize; i++)
+    for(int i = 0; i < Map::mapSize; i++)
     {
-        for(int j = 0; j < this->currentSize; j++)
+        for(int j = 0; j < Map::mapSize; j++)
         {
-            *(*(this->m + i) + j) = Node(j + x0, i + y0, (j+x0)*size, (i+y0)*size, size, size, 0.0f);
+            *(*(this->m + i) + j) = Node(j+1, i+1, (j+x0)*size, (i+y0)*size, size, size, 0.0f);
         }
     }
 
@@ -106,22 +92,69 @@ Map& Map::operator()(const int x0, const int y0, const int ind)
 }
 void Map::SetDefault(const int value)
 {
-    for(int i = 0; i < this->currentSize; i++)
+    for(int i = 0; i < Map::mapSize; i++)
     {
-        for(int j = 0; j < this->currentSize; j++)
+        for(int j = 0; j < Map::mapSize; j++)
         {
             (*(this->m + i) + j)->GetPlace() = value;
         }
     }
 }
-// Node* Map::FindNear(Node& n, int angle)
-// {
-//     switch (angle)
-//     {
-//         case 0: return this->getNode(n.GetX() + 1, n.GetY());
-//         case 90: return this->getNode(n.GetX(), n.GetY() - 1);
-//         case 180: return this->getNode(n.GetX() - 1, n.GetY());
-//         case 270: return this->getNode(n.GetX(), n.GetY() + 1);
-//     }
-//     return NULL;
-// }
+Node* Map::FindNear(Node& n, int angle)
+{
+    switch (angle)
+    {
+        case 0:
+        {
+            if(n.GetX()<6)return this->getNode(n.GetX() + 1, n.GetY());
+            break;
+        }
+        case 90:
+        {
+            if(n.GetY()>1)return this->getNode(n.GetX(), n.GetY() - 1);
+            break;
+        }
+        case 180:
+        {
+            if(n.GetX()>1)return this->getNode(n.GetX() - 1, n.GetY());
+            break;
+        } 
+        case 270:
+        {
+            if(n.GetY()<6)return this->getNode(n.GetX(), n.GetY() + 1);
+            break;
+        } 
+    }
+    return new Node(-1);
+}
+void Map::DisplayIsPlace()
+{
+    for(int i = 1; i < 7; i++)
+    {        
+        cout << endl;
+        for(int j = 1; j < 7; j++)
+        {
+            int placeValue = this->getNode(j, i)->GetPlace();
+            if (placeValue == 0) {
+                cout << "( - ) "; 
+            } else if (placeValue == 1) {
+                cout << "( B ) ";  
+            }
+        }
+    }
+}
+bool Map::ValidShipPlacement(Node& n,const int& length,const int& angle)
+{
+    if(angle==0)
+    {
+        for(int i=0;i<length;i++)
+            if(this->getNode(n.GetX()+i,n.GetY())->GetPlace()==1) return false;
+        return true;
+    }
+    else
+    {
+        for(int i=0;i<length;i++)
+            if(this->getNode(n.GetX(),n.GetY()+i)->GetPlace()==1) return false;
+        return true;
+    }
+}
